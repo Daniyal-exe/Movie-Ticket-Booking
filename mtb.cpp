@@ -141,22 +141,46 @@ void loadMovies() {
 
 
     void loadTickets() {
-        ifstream file("tickets.txt");
-        string email, movieName, date, time;
-        int row, column;
-        while (file >> email >> movieName >> date >> time >> row >> column) {
-            tickets.emplace_back(email, movieName, date, time, row, column);
-        }
-        file.close();
+    ifstream file("tickets.txt");
+    if (!file) {
+        cerr << "Error: Could not open tickets.txt" << endl;
+        return;
     }
 
-    void saveTickets() {
-        ofstream file("tickets.txt");
-        for (const auto& ticket : tickets) {
-            file << ticket.email << " " << ticket.movieName << " " << ticket.date << " " << ticket.time << " " << ticket.row << " " << ticket.column << endl;
-        }
-        file.close();
+    tickets.clear(); // Clear existing tickets to prevent duplication or old data issues
+
+    string email, movieName, date, time;
+    int row, column;
+
+    while (file >> email) {
+        file.ignore(); // Ignore whitespace
+        getline(file, movieName, '\"'); // Handle movie names with spaces
+        getline(file, movieName, '\"'); // Read actual movie name inside quotes
+        file >> date >> time >> row >> column;
+
+        tickets.emplace_back(email, movieName, date, time, row, column);
     }
+
+    file.close();
+}
+
+
+    void saveTickets() {
+    ofstream file("tickets.txt", ios::trunc); // Open file in truncate mode to overwrite old data
+    if (!file) {
+        cerr << "Error: Could not open tickets.txt" << endl;
+        return;
+    }
+
+    for (const auto& ticket : tickets) {
+        file << ticket.email << " \"" << ticket.movieName << "\" " 
+             << ticket.date << " " << ticket.time << " " 
+             << ticket.row << " " << ticket.column << endl;
+    }
+
+    file.close();
+}
+
 
     void signup() {
         clearScreen();
@@ -170,7 +194,7 @@ void loadMovies() {
         cin >> password;
         users.emplace_back(email, password);
         saveUsers();
-        cout << "Signup successful!" << endl;
+        cout << "\n\t\tSignup successful!" << endl;
         system("pause");
     }
 
@@ -466,58 +490,84 @@ cout <<
 
 
 
-    void viewTickets() {
-    	clearScreen();
-        	centerText("\t\t\t******************************************");
-            centerText("\t\t\t         YOUR TICKETS    ");
-            centerText("\t\t\t******************************************\n\n");
-        for (const auto& ticket : tickets) {
-            if (ticket.email == currentUser) {
-                cout << "\nMovie: " << ticket.movieName << " | Date: " << ticket.date << " | Time: " << ticket.time << " | Seat: Row " << static_cast<char>('A' + ticket.row - 1) << " Column " << ticket.column << endl;
-            }
+   void viewTickets() {
+    clearScreen();
+    centerText("\t\t\t******************************************");
+    centerText("\t\t\t         YOUR TICKETS    ");
+    centerText("\t\t\t******************************************\n\n");
+
+    bool found = false; // Track if any ticket is found for the current user
+    for (const auto& ticket : tickets) {
+        if (ticket.email == currentUser) {
+            cout << "\nMovie: " << ticket.movieName 
+                 << " | Date: " << ticket.date 
+                 << " | Time: " << ticket.time 
+                 << " | Seat: Row " << static_cast<char>('A' + ticket.row - 1) 
+                 << " Column " << ticket.column << endl;
+            found = true;
         }
-        system("pause");
     }
+
+    if (!found) {
+        cout << "\nNo tickets found for your account." << endl;
+    }
+
+    system("pause");
+}
+
 
     void cancelTicket() {
-        clearScreen();
-        centerText("**** CANCEL TICKET ****");
-        viewTickets();
+    clearScreen();
+    centerText("\t\t\t******************************************");
+    centerText("\t\t\t         CANCEL TICKET    ");
+    centerText("\t\t\t******************************************\n\n");
 
-        string movieName;
-        cout << "\n\t\tEnter the movie name to cancel: ";
-        cin.ignore();
-        getline(cin, movieName);
+    viewTickets();
 
-        char rowChar;
-        int column;
-        cout << "\n\t\tEnter row (A-F): ";
-        cin >> rowChar;
-        cout << "\n\t\tEnter column (1-12): ";
-        cin >> column;
+    string movieName;
+    cout << "\nEnter the movie name to cancel: ";
+    cin.ignore();
+    getline(cin, movieName);
 
-        int row = rowChar - 'A';
-        auto it = find_if(tickets.begin(), tickets.end(), [&](const Ticket& ticket) {
-            return ticket.email == currentUser && ticket.movieName == movieName && ticket.row == row + 1 && ticket.column == column;
-        });
+    char rowChar;
+    int column;
+    cout << "\nEnter row (A-F): ";
+    cin >> rowChar;
+    cout << "\nEnter column (1-12): ";
+    cin >> column;
 
-        if (it != tickets.end()) {
-            tickets.erase(it);
-            saveTickets();
+    int row = rowChar - 'A';
 
-            for (auto& movie : movies) {
-                if (movie.name == movieName) {
-                    movie.seats[row][column - 1] = '*';
-                    movie.availableSeats++;
-                }
+    // Find the ticket in the vector
+    auto it = remove_if(tickets.begin(), tickets.end(), [&](const Ticket& ticket) {
+        return ticket.email == currentUser && 
+               ticket.movieName == movieName && 
+               ticket.row == row + 1 && 
+               ticket.column == column;
+    });
+
+    if (it != tickets.end()) {
+        tickets.erase(it, tickets.end());
+        saveTickets(); // Save updated tickets
+
+        // Update the movie's seating chart
+        for (auto& movie : movies) {
+            if (movie.name == movieName) {
+                movie.seats[row][column - 1] = '*';
+                movie.availableSeats++;
+                break;
             }
-            saveMovies();
-            cout << "Ticket canceled successfully!" << endl;
-        } else {
-            cout << "No such ticket found!" << endl;
         }
-        system("pause");
+
+        saveMovies(); // Save updated movie details
+        cout << "Ticket canceled successfully!" << endl;
+    } else {
+        cout << "Ticket not found!" << endl;
     }
+
+    system("pause");
+}
+
 
     void searchMovie() {
         clearScreen();
