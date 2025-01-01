@@ -390,17 +390,17 @@ cout <<
     	centerText("\t\t\t******************************************\n\n");
 
     	cout << "Available Movies:\n\n";
-
+		cout << string(102, '-') << endl;
     	// Display table headers with separators
-    	cout << setw(10) << left << "S.NO"
+    	cout << setw(10) << left << " S.NO"
          	<< "|" << setw(30) << left << "MOVIE NAME"
          	<< "|" << setw(15) << left << "SHOW DATE"
          	<< "|" << setw(15) << left << "SHOW TIME"
-         	<< "|" << setw(15) << left << "SEATS AVAILABLE"
-         	<< "|" << setw(10) << left << "PRICE" << endl;
+         	<< "|" << setw(20) << left << "SEATS AVAILABLE"
+         	<< "|" << setw(10) << left << "PRICE |" << endl;
 
     	// Add a separator line
-    	cout << string(90, '-') << endl;
+    	cout << string(102, '-') << endl;
 
     	// Loop through movies and display them in a table with separators
     	for (size_t i = 0; i < movies.size(); ++i) {
@@ -408,7 +408,7 @@ cout <<
      			<< "|" << setw(30) << left << movies[i].name // No extra quotes here
      			<< "|" << setw(15) << left << movies[i].date
      			<< "|" << setw(15) << left << movies[i].time
-     			<< "|" << setw(15) << left << movies[i].availableSeats
+     			<< "|" << setw(20) << left << movies[i].availableSeats
      			<< "|" << setw(10) << left << TICKET_PRICE << endl;
     	}
     	cout << endl;
