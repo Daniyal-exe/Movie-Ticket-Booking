@@ -115,9 +115,6 @@ void loadMovies() {
 }
 
 
-
-
-
     void saveMovies() {
     ofstream file("movies.txt");
     if (!file) {
@@ -141,7 +138,6 @@ void loadMovies() {
 
     file.close();
 }
-
 
 
     void loadTickets() {
@@ -205,8 +201,6 @@ void loadMovies() {
             centerText("\t\t\t***********************************************************");
             centerText("\t\t\t\t  LOGIN/SIGNUP    ");
             centerText("\t\t\t***********************************************************\n\n");
-//            cout << "1. Login" << endl;
-//            cout << "2. Signup" << endl;
 cout <<
     "                  \t========================        \t\t==========================\n"
     "                  \t* (1)     LOGIN        *        \t\t* (2)      SIGNUP        *\n"
@@ -232,83 +226,122 @@ cout <<
         } while (choice != 1);
     }
 
-    void adminPanel() {
-        clearScreen();
-        string username, password;
-        cout << "Enter admin username: ";
-        cin >> username;
-        cout << "Enter admin password: ";
-        cin >> password;
 
-        if (username == "admin" && password == "admin123") {
-            int choice;
-            do {
-                clearScreen();
-                centerText("\t\t\t******************************************");
-            	centerText("\t\t\t        ADMIN PANEL    ");
-            	centerText("\t\t\t******************************************\n\n");
-//                cout << "1. Add Movie" << endl;
-//                cout << "2. View Users" << endl;
-//                cout << "3. Logout" << endl;
+void adminPanel() {
+    clearScreen();
+    centerText("\t\t\t******************************************");
+    centerText("\t\t\t        ADMIN LOGIN    ");
+    centerText("\t\t\t******************************************\n\n");
+    string username, password;
+    cout << "\n\t\tEnter admin username: ";
+    cin >> username;
+    cout << "\n\t\tEnter admin password: ";
+    cin >> password;
+
+    if (username == "admin" && password == "admin123") {
+        int choice;
+        do {
+            clearScreen();
+            centerText("\t\t\t******************************************");
+            centerText("\t\t\t        ADMIN PANEL    ");
+            centerText("\t\t\t******************************************\n\n");
 cout <<
     "                  ========================        ==========================        ======================\n"
-    "                  * (1)    Add Movie     *        * (2)    View Users      *        * (3)     Logout     *\n"
-    "                  ========================        ==========================        ======================\n\n";
-                cout << "Enter your choice: ";
-                cin >> choice;
+    "                  * (1)    Add Movie     *        * (2)     View Users     *        * (3)  Delete Movie  *\n"
+    "                  ========================        ==========================        ======================\n\n"
+    "                                                ==============================\n"
+    "                                                * (4)        Logout          *\n"
+    "                                                ==============================\n\n";
+            cout << "Enter your choice: ";
+            cin >> choice;
 
-                switch (choice) {
+            switch (choice) {
                 case 1: {
-    			string name, date, time;
-    			int seats;
-    			clearScreen();
-    			centerText("\t\t\t******************************************");
-    			centerText("\t\t\t        ADD MOVIE    ");
-    			centerText("\t\t\t******************************************\n\n");
+                    string name, date, time;
+                    int seats;
+                    clearScreen();
+                    centerText("\t\t\t******************************************");
+                    centerText("\t\t\t        ADD MOVIE    ");
+                    centerText("\t\t\t******************************************\n\n");
 
-    			cout << "Enter movie name: ";
-    			cin.ignore(); // To clear any leftover newline in the buffer
-    			getline(cin, name);
+                    cout << "\tEnter movie name: ";
+                    cin.ignore(); // To clear any leftover newline in the buffer
+                    getline(cin, name);
 
-    			cout << "Enter date (e.g., 12-02-2025): ";
-    			cin >> date;
+                    cout << "\n\tEnter show date (dd-mm-yyyy): ";
+                    cin >> date;
 
-    			cout << "Enter time (e.g., 02:30): ";
-    			cin >> time;
+                    cout << "\n\tEnter show time (hh:mm): ";
+                    cin >> time;
 
-    			cout << "Enter available seats: ";
-    			cin >> seats;
+                    cout << "\n\tEnter available seats: ";
+                    cin >> seats;
 
-    			movies.emplace_back(name, date, time, seats);
-    			saveMovies();
-    			cout << "Movie added successfully!" << endl;
-    			system("pause");
-    			break;
-				}
+                    movies.emplace_back(name, date, time, seats);
+                    saveMovies();
+                    cout << "\n\n\t\t\t\tMovie added successfully!" << endl;
+                    system("pause");
+                    break;
+                }
                 case 2:
                     clearScreen();
-					centerText("\t\t\t******************************************");
-            		centerText("\t\t\t    REGISTERED USER'S    ");
-            		centerText("\t\t\t******************************************\n\n");
+                    centerText("\t\t\t******************************************");
+                    centerText("\t\t\t    REGISTERED USERS    ");
+                    centerText("\t\t\t******************************************\n\n");
                     for (const auto& user : users) {
-                        cout << "\tUser Email:\t" << user.email << endl<<endl;
+                        cout << "\tUser Email:\t" << user.email << endl << endl;
                     }
                     system("pause");
                     break;
-                case 3:
+                case 3: {
+                    clearScreen();
+                    centerText("\t\t\t******************************************");
+                    centerText("\t\t\t        DELETE MOVIE    ");
+                    centerText("\t\t\t******************************************\n\n");
+
+                    cout << "Available Movies:\n\n";
+
+                    // Display movies with indices
+                    for (size_t i = 0; i < movies.size(); ++i) {
+                        cout << "\n(" << i + 1 << ") " << movies[i].name
+                             << " | Date: " << movies[i].date
+                             << " | Time: " << movies[i].time
+                             << " | Seats: " << movies[i].availableSeats << endl;
+                    }
+
+                    int deleteChoice;
+                    cout << "\nEnter the movie number to delete: ";
+                    cin >> deleteChoice;
+
+                    if (deleteChoice > 0 && deleteChoice <= movies.size()) {
+                        // Delete the selected movie
+                        movies.erase(movies.begin() + (deleteChoice - 1));
+                        saveMovies();
+                        cout << "Movie deleted successfully!" << endl;
+                    } else {
+                        cout << "Invalid choice!" << endl;
+                    }
+                    system("pause");
+                    break;
+                }
+                case 4:
                     return;
                 default:
                     cout << "Invalid choice!" << endl;
-                }
-            } while (choice != 3);
-        } else {
-            cout << "Invalid admin credentials!" << endl;
-            system("pause");
-        }
+                    system("pause");
+            }
+        } while (choice != 4);
+    } else {
+        cout << "Invalid admin credentials!" << endl;
+        system("pause");
     }
+}
+
+
+
 
     void displaySeatingChart(const Movie& movie) {
-        centerText("Seating Chart");
+        centerText("Seating Chart\n");
         cout << "    ";
         for (int col = 1; col <= 12; ++col) {
             cout << setw(3) << col;
@@ -323,64 +356,6 @@ cout <<
             cout << endl;
         }
     }
-
-//    void bookTicket() {
-//        clearScreen();
-//        	centerText("\t\t\t******************************************");
-//            centerText("\t\t\t      BOOK TICKET    ");
-//            centerText("\t\t\t******************************************\n\n");
-//        cout << "Available Movies:\n\n";
-//        for (size_t i = 0; i < movies.size(); ++i) {
-//            cout << i + 1 << ". " << movies[i].name << " | " << movies[i].date << " | " << movies[i].time << " | Seats: " << movies[i].availableSeats << endl<<endl;
-//        }
-//
-//        int choice;
-//        cout << "Enter the movie number to book: ";
-//        cin >> choice;
-//
-//        if (choice > 0 && choice <= movies.size() && movies[choice - 1].availableSeats > 0) {
-//            Movie& selectedMovie = movies[choice - 1];
-//
-//            int seatsToBook;
-//            cout << "Enter the number of seats to book: ";
-//            cin >> seatsToBook;
-//
-//            if (seatsToBook > selectedMovie.availableSeats) {
-//                cout << "Not enough seats available!" << endl;
-//                system("pause");
-//                return;
-//            }
-//
-//            for (int i = 0; i < seatsToBook; ++i) {
-//                clearScreen();
-//                displaySeatingChart(selectedMovie);
-//
-//                char rowChar;
-//                int column;
-//                cout << "Enter row (A-F): ";
-//                cin >> rowChar;
-//                cout << "Enter column number (1-12): ";
-//                cin >> column;
-//
-//                int row = rowChar - 'A';
-//                if (row >= 0 && row < 6 && column >= 1 && column <= 12 && selectedMovie.seats[row][column - 1] == '*') {
-//                    selectedMovie.seats[row][column - 1] = 'X';
-//                    selectedMovie.availableSeats--;
-//
-//                    tickets.emplace_back(currentUser, selectedMovie.name, selectedMovie.date, selectedMovie.time, row + 1, column);
-//                } else {
-//                    cout << "Invalid seat selection or seat already booked!" << endl;
-//                    --i; // Retry the same seat booking
-//                }
-//            }
-//            saveMovies();
-//            saveTickets();
-//            cout << "Ticket(s) booked successfully!" << endl;
-//        } else {
-//            cout << "Invalid choice or no available seats!" << endl;
-//        }
-//        system("pause");
-//    }
 
 
 	void bookTicket() {
@@ -431,8 +406,6 @@ cout <<
             	return;
         	}
 
-        	// Calculate total price
-        
 
            		// Proceed with seat booking
             	for (int i = 0; i < seatsToBook; ++i) {
@@ -441,7 +414,7 @@ cout <<
 
                		char rowChar;
                		int column;
-               		cout << "Enter row (A-F): ";
+               		cout << "\nEnter row (A-F): ";
                		cin >> rowChar;
                		cout << "Enter column number (1-12): ";
                		cin >> column;
@@ -457,6 +430,7 @@ cout <<
                    		--i; // Retry the same seat booking
                		}
            		}
+           		//Calculate total price
            		int totalPrice = seatsToBook * TICKET_PRICE;
 
         	// Display payment prompt
@@ -499,7 +473,7 @@ cout <<
             centerText("\t\t\t******************************************\n\n");
         for (const auto& ticket : tickets) {
             if (ticket.email == currentUser) {
-                cout << "Movie: " << ticket.movieName << " | Date: " << ticket.date << " | Time: " << ticket.time << " | Seat: Row " << static_cast<char>('A' + ticket.row - 1) << " Column " << ticket.column << endl;
+                cout << "\nMovie: " << ticket.movieName << " | Date: " << ticket.date << " | Time: " << ticket.time << " | Seat: Row " << static_cast<char>('A' + ticket.row - 1) << " Column " << ticket.column << endl;
             }
         }
         system("pause");
@@ -511,15 +485,15 @@ cout <<
         viewTickets();
 
         string movieName;
-        cout << "Enter the movie name to cancel: ";
+        cout << "\n\t\tEnter the movie name to cancel: ";
         cin.ignore();
         getline(cin, movieName);
 
         char rowChar;
         int column;
-        cout << "Enter row (A-F): ";
+        cout << "\n\t\tEnter row (A-F): ";
         cin >> rowChar;
-        cout << "Enter column (1-12): ";
+        cout << "\n\t\tEnter column (1-12): ";
         cin >> column;
 
         int row = rowChar - 'A';
@@ -562,13 +536,13 @@ cout <<
             transform(movieNameLower.begin(), movieNameLower.end(), movieNameLower.begin(), ::tolower);
 
             if (movieNameLower.find(searchQuery) != string::npos) {
-                cout << "Movie: " << movie.name << " | Date: " << movie.date << " | Time: " << movie.time << " | Seats: " << movie.availableSeats << endl;
+                cout << "\nMovie: " << movie.name << " | Date: " << movie.date << " | Time: " << movie.time << " | Seats: " << movie.availableSeats << endl;
                 found = true;
             }
         }
 
         if (!found) {
-            cout << "No movies found matching the query!" << endl;
+            cout << "\nNo movies found matching the query!" << endl;
         }
         system("pause");
     }
@@ -580,13 +554,6 @@ cout <<
             	centerText("\t\t\t******************************************");
             	centerText("\t\t\t        USER PANEL    ");
             	centerText("\t\t\t******************************************\n\n");
-//            cout << "1. Book Ticket" << endl;
-//            cout << "2. View Tickets" << endl;
-//            cout << "3. Cancel Ticket" << endl;
-//            cout << "4. Search Movie" << endl;
-//            cout << "5. Logout" << endl;
-
-
 cout <<
     "                  ========================        ==========================        ======================\n"
     "                  * (1)   Book Ticket    *        * (2)    View Tickets    *        * (3)  Cancel Ticket *\n"
@@ -594,8 +561,6 @@ cout <<
     "                                   ========================        ==========================\n"
     "                                   * (4)  Search Movie    *        * (5)      Logout        *\n"
     "                                   ========================        ==========================\n\n";
-
-
             cout << "Enter your choice: ";
             cin >> choice;
 
