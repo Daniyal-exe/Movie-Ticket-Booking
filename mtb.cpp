@@ -226,11 +226,9 @@ void loadMovies() {
             centerText("\t\t\t\t  LOGIN/SIGNUP    ");
             centerText("\t\t\t***********************************************************\n\n");
 cout <<
-    "                  \t========================        \t\t==========================\n"
-    "                  \t* (1)     LOGIN        *        \t\t* (2)      SIGNUP        *\n"
-    "                  \t========================        \t\t==========================\n\n";
-
-
+    "                  ========================        ==========================        ======================\n"
+    "                  * (1)     LOGIN        *        * (2)      SIGNUP        *        * (3)      BACK      *\n"
+    "                  ========================        ==========================        ======================\n\n";
             cout << "Enter your choice: ";
             cin >> choice;
 
@@ -243,6 +241,8 @@ cout <<
             case 2:
                 signup();
                 break;
+            case 3:
+                return;
             default:
                 cout << "Invalid choice!" << endl;
                 system("pause");
@@ -288,9 +288,12 @@ cout <<
                     centerText("\t\t\t        ADD MOVIE    ");
                     centerText("\t\t\t******************************************\n\n");
 
-                    cout << "\tEnter movie name: ";
+                    cout << "\tEnter movie name or type b to go back: ";
                     cin.ignore(); // To clear any leftover newline in the buffer
                     getline(cin, name);
+                    if(name == "b" || name == "B"){
+						break;
+					}
 
                     cout << "\n\tEnter show date (dd-mm-yyyy): ";
                     cin >> date;
@@ -334,8 +337,11 @@ cout <<
                     }
 
                     int deleteChoice;
-                    cout << "\nEnter the movie number to delete: ";
+                    cout << "\nEnter the movie number to delete or type 0 to go back: ";
                     cin >> deleteChoice;
+                    if(deleteChoice == 0){
+                    	break;
+					}
 
                     if (deleteChoice > 0 && deleteChoice <= movies.size()) {
                         // Delete the selected movie
@@ -389,7 +395,7 @@ cout <<
     	centerText("\t\t\t      BOOK TICKET    ");
     	centerText("\t\t\t******************************************\n\n");
 
-    	cout << "Available Movies:\n\n";
+    	cout << "Available Movies:\t\t\t\t\t\t\t\t Type 0 to go back:\n\n";
 		cout << string(102, '-') << endl;
     	// Display table headers with separators
     	cout << setw(10) << left << " S.NO"
@@ -416,6 +422,10 @@ cout <<
     	int choice;
     	cout << "Enter the movie number to book: ";
     	cin >> choice;
+    	
+    	if(choice == 0){
+			return;
+		}
 
     	if (choice > 0 && choice <= movies.size() && movies[choice - 1].availableSeats > 0) {
         	Movie& selectedMovie = movies[choice - 1];
@@ -525,9 +535,12 @@ cout <<
     viewTickets();
 
     string movieName;
-    cout << "\nEnter the movie name to cancel: ";
+    cout << "\nEnter the movie name to cancel or type b to go back: ";
     cin.ignore();
     getline(cin, movieName);
+    if(movieName == "b" || movieName == "B"){
+		return;
+	}
 
     char rowChar;
     int column;
@@ -572,12 +585,15 @@ cout <<
     void searchMovie() {
         clearScreen();
         	centerText("\t\t\t******************************************");
-            centerText("\t\t\t      SEARCH MOVIE    ");
+            centerText("\t\t\t\t      SEARCH MOVIE    ");
             centerText("\t\t\t******************************************\n\n");
         string searchQuery;
-        cout << "Enter movie name: ";
+        cout << "Enter movie name or type b to go back: ";
         cin.ignore();
         getline(cin, searchQuery);
+        if(searchQuery == "b" || searchQuery == "B"){
+			return;
+		}
         transform(searchQuery.begin(), searchQuery.end(), searchQuery.begin(), ::tolower);
 
         bool found = false;
